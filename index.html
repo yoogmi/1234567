@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>유쌤 마방진문제</title>
+  <!-- 구글 폰트: Jua (상큼귀여운 느낌) -->
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Jua&display=swap" rel="stylesheet">
+
+  <style>
+    body {
+      font-family: 'Jua', sans-serif; /* 상큼귀여운 폰트 */
+      background: #f4f4f4;
+      margin: 20px;
+    }
+    h1 {
+      text-align: left; /* 제목도 왼쪽 정렬 */
+      margin-bottom: 30px;
+    }
+
+    /* 퍼즐 래퍼: 왼쪽에 배치 (가운데 정렬 제거) */
+    .puzzle-wrap {
+      width: 380px;   /* 컨테이너 너비 넉넉히 */
+      height: 480px;  /* 높이를 넉넉히 (큰 원 때문에) */
+      margin: 0 0 50px 0; /* 왼쪽 정렬 → margin-left: 0, margin-bottom: 50px */
+      position: relative;
+      background: #fff;
+      box-shadow: 0 0 5px rgba(0,0,0,0.2);
+      border-radius: 6px;
+      padding-top: 10px;
+      display: none; /* 기본적으로 감춤, .active면 표시 */
+    }
+    .puzzle-wrap.active {
+      display: block;
+    }
+
+    /* 문제 제목 왼쪽 정렬 */
+    .puzzle-title {
+      font-weight: bold;
+      margin: 10px;
+      font-size: 1.2em;
+      text-align: left; 
+    }
+
+    /* 문제 정보(사용 숫자, 합 등) 왼쪽 정렬 */
+    .puzzle-info {
+      margin: 10px;
+      color: #333;
+      line-height: 1.6;
+      text-align: left;
+    }
+
+    /* 원들을 배치할 컨테이너 */
+    .circle-container {
+      width: 380px;   /* 퍼즐 너비에 맞춤 */
+      height: 360px;  /* 아래 공간 조금 남김 */
+      position: relative;
+    }
+
+    /* SVG로 선을 그려, 대칭 원 쌍 연결 */
+    .circle-container svg {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 380px;
+      height: 360px;
+      pointer-events: none;
+    }
+    .circle-container line {
+      stroke: #555;
+      stroke-width: 2;
+    }
+
+    /* 큰 원 (60x60) */
+    .circle {
+      position: absolute;
+      width: 60px;
+      height: 60px;
+      background: #fff9c4;   /* 연한 노란색 */
+      border: 2px solid #ccc;
+      border-radius: 50%;
+    }
+
+    /*
+      가운데 원 (지름 60px)
+      중심이 (190,180) 부근이 되도록 top,left를 (중심 - 반지름=30)로 설정
+    */
+    .center {
+      top: 150px;  /* 180 - 30 */
+      left: 160px; /* 190 - 30 */
+    }
+
+    /* 바깥 6개 원 - 대략적인 각도(0°, 60°, 120°, 180°, 240°, 300°)로 배치 */
+    .pos1 { top: 150px; left: 280px; } /* 오른쪽 중앙 */
+    .pos2 { top: 63px;  left: 220px; } /* 오른쪽 위 */
+    .pos3 { top: 63px;  left: 100px; } /* 왼쪽 위 */
+    .pos4 { top: 150px; left: 40px;  } /* 왼쪽 중앙 */
+    .pos5 { top: 237px; left: 100px; } /* 왼쪽 아래 */
+    .pos6 { top: 237px; left: 220px; } /* 오른쪽 아래 */
+
+    /* 다음 문제 버튼: 퍼즐 영역 오른쪽 아래 */
+    .next-btn {
+      display: inline-block;
+      padding: 8px 14px;
+      background: #007bff;
+      color: #fff;
+      text-decoration: none;
+      border-radius: 4px;
+      position: absolute;
+      bottom: 20px;
+      right: 20px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+    .next-btn:hover {
+      background: #0056b3;
+    }
+  </style>
+</head>
+<body>
+  <h1>유쌤 마방진문제</h1>
+
+  <!-- 문제 1 -->
+  <div class="puzzle-wrap active" id="puzzle1">
+    <div class="puzzle-title">문제 1</div>
+    <div class="circle-container">
+      <!-- 선: pos1↔pos4, pos2↔pos5, pos3↔pos6 (적당한 좌표로 연결) -->
+      <svg>
+        <!-- 대략 pos1 중심 = (280+30=310, 150+30=180), pos4= (40+30=70,180) -->
+        <line x1="310" y1="180" x2="70" y2="180" />
+        <!-- pos2= (220+30=250, 63+30=93), pos5= (100+30=130,237+30=267) -->
+        <line x1="250" y1="93" x2="130" y2="267" />
+        <!-- pos3= (100+30=130,63+30=93), pos6= (220+30=250,237+30=267) -->
+        <line x1="130" y1="93" x2="250" y2="267" />
+      </svg>
+      <div class="circle center"></div>
+      <div class="circle pos1"></div>
+      <div class="circle pos2"></div>
+      <div class="circle pos3"></div>
+      <div class="circle pos4"></div>
+      <div class="circle pos5"></div>
+      <div class="circle pos6"></div>
+    </div>
+    <div class="puzzle-info">
+      사용 숫자: 1, 2, 3, 5, 7, 8, 9<br>
+      대칭 원 쌍의 합: 15
+    </div>
+    <a class="next-btn" onclick="showPuzzle(2)">다음 문제 &raquo;</a>
+  </div>
+
+  <!-- 문제 2 -->
+  <div class="puzzle-wrap" id="puzzle2">
+    <div class="puzzle-title">문제 2</div>
+    <div class="circle-container">
+      <svg>
+        <line x1="310" y1="180" x2="70" y2="180" />
+        <line x1="250" y1="93" x2="130" y2="267" />
+        <line x1="130" y1="93" x2="250" y2="267" />
+      </svg>
+      <div class="circle center"></div>
+      <div class="circle pos1"></div>
+      <div class="circle pos2"></div>
+      <div class="circle pos3"></div>
+      <div class="circle pos4"></div>
+      <div class="circle pos5"></div>
+      <div class="circle pos6"></div>
+    </div>
+    <div class="puzzle-info">
+      사용 숫자: 1, 3, 4, 5, 7, 8, 9<br>
+      대칭 원 쌍의 합: 13
+    </div>
+    <a class="next-btn" onclick="showPuzzle(3)">다음 문제 &raquo;</a>
+  </div>
+
+  <!-- 문제 3 -->
+  <div class="puzzle-wrap" id="puzzle3">
+    <div class="puzzle-title">문제 3</div>
+    <div class="circle-container">
+      <svg>
+        <line x1="310" y1="180" x2="70" y2="180" />
+        <line x1="250" y1="93" x2="130" y2="267" />
+        <line x1="130" y1="93" x2="250" y2="267" />
+      </svg>
+      <div class="circle center"></div>
+      <div class="circle pos1"></div>
+      <div class="circle pos2"></div>
+      <div class="circle pos3"></div>
+      <div class="circle pos4"></div>
+      <div class="circle pos5"></div>
+      <div class="circle pos6"></div>
+    </div>
+    <div class="puzzle-info">
+      사용 숫자: 2, 3, 4, 5, 6, 7, 8<br>
+      대칭 원 쌍의 합: 17
+    </div>
+    <a class="next-btn" onclick="showPuzzle(4)">다음 문제 &raquo;</a>
+  </div>
+
+  <!-- 문제 4 -->
+  <div class="puzzle-wrap" id="puzzle4">
+    <div class="puzzle-title">문제 4</div>
+    <div class="circle-container">
+      <svg>
+        <line x1="310" y1="180" x2="70" y2="180" />
+        <line x1="250" y1="93" x2="130" y2="267" />
+        <line x1="130" y1="93" x2="250" y2="267" />
+      </svg>
+      <div class="circle center"></div>
+      <div class="circle pos1"></div>
+      <div class="circle pos2"></div>
+      <div class="circle pos3"></div>
+      <div class="circle pos4"></div>
+      <div class="circle pos5"></div>
+      <div class="circle pos6"></div>
+    </div>
+    <div class="puzzle-info">
+      사용 숫자: 3, 4, 5, 6, 7, 8, 9<br>
+      대칭 원 쌍의 합: 18
+    </div>
+    <a class="next-btn" onclick="alert('마지막 문제입니다!')">완료</a>
+  </div>
+
+  <script>
+    function showPuzzle(num) {
+      for (let i = 1; i <= 4; i++) {
+        document.getElementById('puzzle' + i).classList.remove('active');
+      }
+      document.getElementById('puzzle' + num).classList.add('active');
+    }
+  </script>
+</body>
+</html>
